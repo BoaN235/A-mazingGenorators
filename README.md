@@ -1,3 +1,3 @@
 # A-mazingGenorators
  
-funny
+funny yay
