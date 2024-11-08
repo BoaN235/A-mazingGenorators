@@ -14,38 +14,20 @@ function createCell(className) {
 }
 
 function generateClass(typeofgeneration) {
-    let state = 0;
-
-    if (typeofgeneration === 'random') {
-        state = Math.floor(Math.random() * 6);
-    } else if (typeofgeneration === 'wavefunction') {
-        state = 0; // Placeholder for wavefunction-based generation logic
-    } else if (typeofgeneration === 'other') {
-        state = 0; // Placeholder for other generation logic
-    }
-
-    switch (state) {
-        case 0: return "n"; // Open path
-        case 1: return "w"; // Wall
-        case 2: return "e"; // Entrance
-        case 3: return "s"; // Exit
-        case 4: return "so"; // Special object
-        case 5: return "em"; // Empty cell
-        default: return "na";
-    }
+    // Placeholder function for future generation logic
 }
 
 function generateStructure(tableBody, typeofgeneration) {
     const rows = 50;
     const cols = 50;
 
-    // Initialize grid as 2D array
+    // Initialize grid as a 2D array
     grid = Array.from({ length: rows }, () => Array(cols));
 
     for (let i = 0; i < rows; i++) {
         const row = document.createElement("tr");
         for (let j = 0; j < cols; j++) {
-            const className = "na";
+            const className = "na";  // Default unvisited cells are "na" (not visited)
             const cell = createCell(className);
 
             // Add cell to grid
@@ -59,7 +41,12 @@ function generateStructure(tableBody, typeofgeneration) {
         tableBody.appendChild(row);
     }
 
-    generateMaze(grid);
+    // Start maze generation based on selected type
+    if (typeofgeneration === 'random') {
+        generateMazeDFS(0, 0);
+    } else {
+        generateMaze(grid, typeofgeneration);
+    }
 }
 
 // Get adjacent cells based on row and column indices
@@ -74,22 +61,60 @@ function getAdjacentCells(row, col) {
         const newRow = row + dx;
         const newCol = col + dy;
 
-        if (newRow >= 0 && newRow < grid.length && newCol >= 0 && newCol < grid[0].length) {
-            adjacentCells.push(grid[newRow][newCol]);
+        if (
+            newRow >= 0 && newRow < grid.length &&
+            newCol >= 0 && newCol < grid[0].length
+        ) {
+            adjacentCells.push([newRow, newCol]);
         }
     });
 
     return adjacentCells;
 }
 
-function generateMaze(grid) {
-    adjacentCells = getAdjacentCells
-    
+// Generate maze using Depth-First Search (DFS) algorithm
+function generateMazeDFS(row, col) {
+    const stack = [[row, col]];
+    grid[row][col].className = "n"; // Start cell as path
 
+    while (stack.length > 0) {
+        const [currentRow, currentCol] = stack[stack.length - 1];
+        const neighbors = getAdjacentCells(currentRow, currentCol)
+            .filter(([r, c]) => grid[r][c].className === "na"); // Only unvisited cells
+
+        if (neighbors.length === 0) {
+            stack.pop(); // Backtrack if no unvisited neighbors
+        } else {
+            const [nextRow, nextCol] = neighbors[Math.floor(Math.random() * neighbors.length)];
+
+            // Create passage
+            grid[nextRow][nextCol].className = "n";
+
+            // Randomly decide which direction to place the wall
+            const direction = Math.floor(Math.random() * 4); // Random direction for the wall
+            switch (direction) {
+                case 0: grid[currentRow][currentCol].className = "n"; break; // North wall
+                case 1: grid[currentRow][currentCol].className = "s"; break; // South wall
+                case 2: grid[currentRow][currentCol].className = "e"; break; // East wall
+                case 3: grid[currentRow][currentCol].className = "w"; break; // West wall
+            }
+
+            stack.push([nextRow, nextCol]);
+        }
+    }
+}
+
+// Placeholder for other maze generation types (random, wavefunction)
+function generateMaze(grid, typeofgeneration) {
+    if (typeofgeneration === 'random') {
+        // Placeholder for random generation logic
+    } else if (typeofgeneration === 'wavefunction') {
+        // Placeholder for wavefunction-based generation logic
+    }
 }
 
 function toggleCellClass(cell) {
-    const classes = ["n", "w", "e", "s", "so", "em"];
+    const classes = ["n", "w-n", "w-s", "w-e", "w-w", "so", "em"];
     let currentClass = cell.className;
     let currentIndex = classes.indexOf(currentClass);
 
