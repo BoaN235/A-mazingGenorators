@@ -13,9 +13,6 @@ function createCell(className) {
     return cell;
 }
 
-function generateClass(typeofgeneration) {
-    // Placeholder function for future generation logic
-}
 
 function generateStructure(tableBody, typeofgeneration) {
     const rows = 50;
