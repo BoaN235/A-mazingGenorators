@@ -13,6 +13,8 @@ function createCell(className) {
     return cell;
 }
 
+//goog
+
 
 function generateStructure(tableBody, typeofgeneration) {
     const rows = 50;
